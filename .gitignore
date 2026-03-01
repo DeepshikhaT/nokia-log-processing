@@ -1,0 +1,23 @@
+touch .gitignore
+code .gitignore
+```
+
+---
+
+## Step 2 — Add These Lines Inside .gitignore in VS Code
+```
+# AWS installer files
+*.pkg
+
+# Mac system files
+.DS_Store
+
+# Log data files - data stays on NFS/S3 not in Git
+data/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment files
+.env
