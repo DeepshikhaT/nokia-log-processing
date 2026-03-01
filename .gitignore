@@ -21,3 +21,4 @@ __pycache__/
 
 # Environment files
 .envsteps.txt
+steps.txt
