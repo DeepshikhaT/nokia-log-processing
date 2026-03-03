@@ -45,12 +45,31 @@ pipeline {
 
         stage('Trigger Glue Job') {
             steps {
-                echo 'Triggering AWS Glue Job...'
-                sh '''
-                    aws glue start-job-run --job-name ${GLUE_JOB_NAME}
-                    echo "Glue job triggered successfully!"
-                '''
-            }
+        echo 'Triggering AWS Glue Job...'
+        sh '''
+            # Start Glue job and capture Job Run ID
+            JOB_RUN_ID=$(aws glue start-job-run --job-name ${GLUE_JOB_NAME} --query 'JobRunId' --output text)
+            echo "Glue Job started with Run ID: $JOB_RUN_ID"
+
+            # Wait for job to complete
+            echo "Waiting for Glue job to complete..."
+            while true; do
+                STATUS=$(aws glue get-job-run --job-name ${GLUE_JOB_NAME} --run-id $JOB_RUN_ID --query 'JobRun.JobRunState' --output text)
+                echo "Current status: $STATUS"
+
+                if [ "$STATUS" = "SUCCEEDED" ]; then
+                    echo "Glue job completed successfully!"
+                    break
+                elif [ "$STATUS" = "FAILED" ] || [ "$STATUS" = "STOPPED" ] || [ "$STATUS" = "TIMEOUT" ]; then
+                    echo "Glue job failed with status: $STATUS"
+                    exit 1
+                fi
+
+                echo "Job still running... checking again in 30 seconds"
+                sleep 30
+            done
+        '''
+    }
         }
 
     }
