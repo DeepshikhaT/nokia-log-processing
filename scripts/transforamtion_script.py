@@ -1,12 +1,4 @@
-# ─────────────────────────────────────────
-# Script  : glue_transform.py
-# Purpose : Read raw logs from S3, transform and write as Parquet
-# Author  : Your Name
-# ─────────────────────────────────────────
 
-# ─────────────────────────────────────────
-# Imports
-# ─────────────────────────────────────────
 from pyspark.sql.functions import regexp_extract, lit   # For transformations
 from pyspark.context import SparkContext                 # PySpark entry point
 from awsglue.context import GlueContext                  # Glue wrapper on Spark
@@ -21,9 +13,9 @@ spark        = glue_context.spark_session
 # ─────────────────────────────────────────
 # Configuration
 # ─────────────────────────────────────────
-INPUT_PATH       = "s3://nokia-log-processing-bucket/raw/logs/"
-OUTPUT_PATH      = "s3://nokia-log-processing-bucket/processed/logs/"
-BAD_RECORDS_PATH = "s3://nokia-log-processing-bucket/bad_records/"
+INPUT_PATH       = "s3://nokia-log-processing-bucket-2024/raw/logs/"
+OUTPUT_PATH      = "s3://nokia-log-processing-bucket-2024/processed/logs/"
+BAD_RECORDS_PATH = "s3://nokia-log-processing-bucket-2024/bad_records/"
 
 # Todays date — will be added as processed_date column
 today = datetime.now().strftime("%Y-%m-%d")
