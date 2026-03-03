@@ -12,7 +12,7 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-key')
         AWS_DEFAULT_REGION    = 'us-east-1'
         BUCKET_NAME           = 'nokia-log-processing-bucket-2024'
-        GLUE_JOB_NAME         = 'nokia-log-processing-job'
+        GLUE_JOB_NAME         = 'nokia-log-processing-job1'
         GLUE_SCRIPT_S3_PATH   = 's3://nokia-log-processing-bucket-2024/scripts/glue_transform.py'
         PATH                  = "/usr/local/bin:/opt/homebrew/bin:${env.PATH}"
     }
