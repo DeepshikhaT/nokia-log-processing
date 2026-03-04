@@ -44,6 +44,11 @@ def get_date_partition():
 
 def get_new_files(source_path):
     new_files = []
+
+    if not os.path.exists(source_path):
+        print(f"WARNING: Path {source_path} does not exist!")
+        return []
+    
     cutoff_time = datetime.now() - timedelta(hours=24)  # 24 hours ago
 
     for filename in os.listdir(source_path):

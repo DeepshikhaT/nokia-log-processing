@@ -33,6 +33,16 @@ pipeline {
             }
         }
 
+        stage('Run Unit Tests') {
+    steps {
+        echo 'Running unit tests...'
+        sh '''
+            pip3 install pytest
+            python3 -m pytest tests/ -v
+        '''
+    }
+}
+
         stage('Upload Glue Script to S3') {
             steps {
                 echo 'Uploading glue_transform.py to S3...'
