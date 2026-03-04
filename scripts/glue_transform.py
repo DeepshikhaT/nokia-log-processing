@@ -17,6 +17,50 @@ INPUT_PATH       = "s3://nokia-log-processing-bucket-2024/raw/logs/"
 OUTPUT_PATH      = "s3://nokia-log-processing-bucket-2024/processed/logs/"
 BAD_RECORDS_PATH = "s3://nokia-log-processing-bucket-2024/bad_records/"
 
+# ─────────────────────────────────────────
+# Data Quality Checks
+# Runs before transformation
+# Stops job if critical checks fail
+# ─────────────────────────────────────────
+
+def run_data_quality_checks(df):
+    print("Running data quality checks...")
+    checks_passed = True
+
+    # Check 1 — Row count
+    # Make sure file is not empty
+    row_count = df.count()
+    if row_count == 0:
+        print("FAIL: No rows found — empty file!")
+        checks_passed = False
+    else:
+        print(f"PASS: Row count check — {row_count} rows found")
+
+    # Check 2 — Null check on value column
+    # Make sure no empty lines
+    null_count = df.filter(df.value == "").count()
+    if null_count > 0:
+        print(f"WARN: {null_count} empty lines found")
+    else:
+        print("PASS: No empty lines found")
+
+    # Check 3 — Valid log level check
+    # Make sure log levels are only ERROR INFO WARN
+    invalid_levels = df.filter(
+        ~df.value.rlike(".*(ERROR|INFO|WARN).*")
+    ).count()
+    if invalid_levels > 0:
+        print(f"WARN: {invalid_levels} lines with unexpected log levels")
+    else:
+        print("PASS: All log levels are valid")
+
+    # Final result
+    if not checks_passed:
+        raise Exception("Data quality checks failed! Stopping pipeline.")
+    
+    print("All data quality checks passed!")
+    return True
+
 # Todays date — will be added as processed_date column
 today = datetime.now().strftime("%Y-%m-%d")
 
@@ -28,6 +72,8 @@ today = datetime.now().strftime("%Y-%m-%d")
 print("Reading raw logs from S3...")
 df = spark.read.text(INPUT_PATH)
 print(f"Total lines read: {df.count()}")
+run_data_quality_checks(df)
+
 
 # ─────────────────────────────────────────
 # Step 2 — Define regex pattern
